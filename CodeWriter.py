@@ -10,7 +10,81 @@ class CodeWriter:
             "that": "THAT",
             "temp": "TMP",
         }
+        self.label_counter = 0  # For unique labels in comparison operations
 
+    def writeArithmetic(self, command):
+        """Writes assembly code for arithmetic-logical VM command"""
+        with open(self.out_path, "w", newline='\n') as f:
+            if command == "add":
+                # Pop two values and add them
+                f.write("@SP\n")  # Get stack pointer
+                f.write("AM=M-1\n")  # Decrement SP and get address
+                f.write("D=M\n")  # D = y
+                f.write("A=A-1\n")  # Point to x
+                f.write("M=D+M\n")  # x + y
+
+            elif command == "sub":
+                # Pop two values and subtract
+                f.write("@SP\n")  # Get stack pointer
+                f.write("AM=M-1\n")  # Decrement SP and get address
+                f.write("D=M\n")  # D = y
+                f.write("A=A-1\n")  # Point to x
+                f.write("M=M-D\n")  # x - y
+
+            elif command == "neg":
+                # Negate top value
+                f.write("@SP\n")  # Get stack pointer
+                f.write("A=M-1\n")  # Point to top of stack
+                f.write("M=-M\n")  # Negate value
+
+            elif command in ["eq", "gt", "lt"]:
+                # Compare top two values
+                label_true = f"{command}true{self.label_counter}"
+                label_end = f"{command}end{self.label_counter}"
+                self.label_counter += 1
+
+                comparison = {
+                    "eq": "JEQ",
+                    "gt": "JGT",
+                    "lt": "JLT"
+                }[command]
+
+                f.write("@SP\n")  # Get stack pointer
+                f.write("AM=M-1\n")  # Decrement SP and get address
+                f.write("D=M\n")  # D = y
+                f.write("A=A-1\n")  # Point to x
+                f.write("D=M-D\n")  # D = x - y
+                f.write(f"@{label_true}\n")
+                f.write(f"D;{comparison}\n")  # Jump if comparison true
+                f.write("@SP\n")  # False case
+                f.write("A=M-1\n")
+                f.write("M=0\n")  # Push false (0)
+                f.write(f"@{label_end}\n")
+                f.write("0;JMP\n")  # Skip true case
+                f.write(f"({label_true})\n")
+                f.write("@SP\n")  # True case
+                f.write("A=M-1\n")
+                f.write("M=-1\n")  # Push true (-1)
+                f.write(f"({label_end})\n")
+
+            elif command == "and":
+                f.write("@SP\n")  # Get stack pointer
+                f.write("AM=M-1\n")  # Decrement SP and get address
+                f.write("D=M\n")  # D = y
+                f.write("A=A-1\n")  # Point to x
+                f.write("M=D&M\n")  # x AND y
+
+            elif command == "or":
+                f.write("@SP\n")  # Get stack pointer
+                f.write("AM=M-1\n")  # Decrement SP and get address
+                f.write("D=M\n")  # D = y
+                f.write("A=A-1\n")  # Point to x
+                f.write("M=D|M\n")  # x OR y
+
+            elif command == "not":
+                f.write("@SP\n")  # Get stack pointer
+                f.write("A=M-1\n")  # Point to top of stack
+                f.write("M=!M\n")  # NOT x
     def WritePushPop(self, command, segment, index):
         with open(self.out_path, "w", newline='\n') as f:
             if command == "push":
@@ -86,7 +160,7 @@ class CodeWriter:
                         f.write("M=D\n")
                 else:
                     #Poping commands that are not pointers
-                    f.write("//Compute the address " + self.segment_table.get(segment)  + "+ " + str(index) + "and store it in R13 temporally\n")
+                    f.write("//Compute the address " + self.segment_table.get(segment) + "+ " + str(index) + "and store it in R13 temporally\n")
                     f.write("@" + self.segment_table.get(segment) + "\n") #@segment
                     f.write("D=M\n")
                     f.write("@" + str(index) + "\n") #@index
@@ -104,6 +178,6 @@ class CodeWriter:
                     f.write("A=M\n")
                     f.write("M=D\n")
 
-# Test function for WritePushPop
-test = CodeWriter("C:/secondYear/Nand2Tetris/res.asm")
-test.WritePushPop("push", "local", 10)
+# # Test function for WritePushPop
+# test = CodeWriter("C:/secondYear/Nand2Tetris/res.asm")
+# test.WritePushPop("push", "local", 10)
