@@ -14,7 +14,7 @@ class CodeWriter:
 
     def writeArithmetic(self, command):
         """Writes assembly code for arithmetic-logical VM command"""
-        with open(self.out_path, "w", newline='\n') as f:
+        with open(self.out_path, "a", newline='\n') as f:
             if command == "add":
                 # Pop two values and add them
                 f.write("@SP\n")  # Get stack pointer
@@ -86,7 +86,7 @@ class CodeWriter:
                 f.write("A=M-1\n")  # Point to top of stack
                 f.write("M=!M\n")  # NOT x
     def WritePushPop(self, command, segment, index):
-        with open(self.out_path, "w", newline='\n') as f:
+        with open(self.out_path, "a", newline='\n') as f:
             if command == "push":
                 ## Push operations takes the value stored in RAM and push it into SP
                 if segment == "constant":

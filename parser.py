@@ -66,7 +66,7 @@ class Parser(object):
                The function gets a line in VM file, cleans it and get the putput
                :return:
                If it's an arithmetic op - the line itself
-               If it's pop or push - the subject that we are poping or pushing
+               If it's pop or push - the subject that we are popping or pushing
                """
         clean_line = self.line_cleaner(self.current_line)
         if (self.command_type() == const.C_ARITHMETIC):
