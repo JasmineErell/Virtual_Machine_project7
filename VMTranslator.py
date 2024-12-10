@@ -5,6 +5,8 @@ class VMTranslator:
     def __init__(self, in_path, out_path):
         self.in_path = in_path
         self.out_path = out_path
+        with open(self.out_path, "w") as f:
+            f.write("")
 
     def main_loop(self):
         parser = Parser(self.in_path)
@@ -26,7 +28,7 @@ class VMTranslator:
 
 
 
-in_path = "C:/secondYear/Nand2Tetris/test.vm"
+in_path = "C:/secondYear/Nand2Tetris/BasicTest.vm"
 out_path = "C:/secondYear/Nand2Tetris/res.asm"
 translator = VMTranslator(in_path, out_path)
 translator.main_loop()

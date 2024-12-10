@@ -15,6 +15,7 @@ class CodeWriter:
     def writeArithmetic(self, command):
         """Writes assembly code for arithmetic-logical VM command"""
         with open(self.out_path, "a", newline='\n') as f:
+            f.write("//" + command + "\n")
             if command == "add":
                 # Pop two values and add them
                 f.write("@SP\n")  # Get stack pointer

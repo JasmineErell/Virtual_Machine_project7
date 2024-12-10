@@ -17,7 +17,10 @@ class Parser(object):
         """
         Cleans comments and whitespace from a line
         """
-        return string.split("//")[0].strip()
+        if type(string) == "NoneType":
+            return " "
+        else:
+            return string.split("//")[0].strip()
 
     def hasMoreLines(self):
         # Checks if there are more lines to process
