@@ -27,8 +27,3 @@ class VMTranslator:
                 codeWriter.writeArithmetic(command)
 
 
-
-in_path = "C:/secondYear/Nand2Tetris/BasicTest.vm"
-out_path = "C:/secondYear/Nand2Tetris/res.asm"
-translator = VMTranslator(in_path, out_path)
-translator.main_loop()

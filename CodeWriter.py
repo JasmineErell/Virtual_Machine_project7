@@ -9,6 +9,7 @@ class CodeWriter:
             "this": "THIS",
             "that": "THAT",
             "temp": "TMP",
+            "static": (self.out_path.split("/")[-1]).split(".")[0]
         }
         self.label_counter = 0  # For unique labels in comparison operations
 
@@ -115,12 +116,20 @@ class CodeWriter:
                         f.write("@SP\n")
                         f.write("A=M\n")
                         f.write("M=D\n")
-                        f.write("//SP ++\n")
                         f.write("@SP\n")
                         f.write("M=M+1\n")
 
+                elif segment == "static":
+                    f.write("@" + self.segment_table.get(segment) + "." + index + "\n")
+                    f.write("D=M\n")
+                    f.write("@SP\n")
+                    f.write("A=M\n")
+                    f.write("M=D\n")
+                    f.write("@SP\n")
+                    f.write("M=M+1\n")
+
                 else:
-                    ##Segments witch are not const or pointer - takes the value @X from the table
+                    ##Segments witch are not const, pointer, or static - takes the value @X from the table
                     f.write("@" + str(index) + "\n")
                     f.write("D=A\n")
                     f.write("@" + self.segment_table.get(segment) + "\n")
@@ -147,6 +156,14 @@ class CodeWriter:
                         f.write("D=M\n")
                         f.write("@THAT\n")
                         f.write("M=D\n")
+
+                elif segment == "static":
+                    f.write("@SP\n")
+                    f.write("AM=M-1\n")
+                    f.write("D=M\n")
+                    f.write("@" + self.segment_table.get(segment) + "." + index + "\n")
+                    f.write("M=D\n")
+
                 else:
                     #Poping commands that are not pointers
                     f.write("@" + self.segment_table.get(segment) + "\n") #@segment
@@ -162,6 +179,4 @@ class CodeWriter:
                     f.write("A=M\n")
                     f.write("M=D\n")
 
-# # Test function for WritePushPop
-# test = CodeWriter("C:/secondYear/Nand2Tetris/res.asm")
-# test.WritePushPop("push", "local", 10)
+
